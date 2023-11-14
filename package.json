@@ -1,0 +1,31 @@
+{
+  "name": "movies-library",
+  "version": "1.0.0",
+  "description": "You can find movie by name, save it in favorites and read information about it",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "live-server",
+    "build": "rollup -c --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alona-Kolisnychenko/movies-library.git"
+  },
+  "keywords": [
+    "movies"
+  ],
+  "author": "Alona Kolisnychenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alona-Kolisnychenko/movies-library/issues"
+  },
+  "homepage": "https://github.com/Alona-Kolisnychenko/movies-library#readme",
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "eslint": "^8.53.0",
+    "rollup": "^4.4.0",
+    "rollup-plugin-import-css": "^3.3.5",
+    "rollup-plugin-postcss": "^4.0.2"
+  }
+}
