@@ -1014,37 +1014,169 @@
     onChange.target = proxy => (proxy && proxy[TARGET]) || proxy;
     onChange.unsubscribe = proxy => proxy[UNSUBSCRIBE] || proxy;
 
-    class MainView extends AbstractView{
+    class DivComponent {
+        constructor(){
+            this.el = document.createElement('div');
 
-        state = {
-            list: [],
-            loading: false,
-            searchQuery: undefined,
-            offset: 0
         }
-
-        constructor(appState){
-            super();
-            this.appState = appState;
-            this.appState = onChange(this.appState, this.appStateHook.bind(this));
-            this.setTitle("Search Movies");
-        }
-
-        appStateHook(path){
-            if(path === 'favorites'){
-                console.log(path);
-                // this.render()
-            }
-        }
-
         render(){
-            const main = document.createElement('div');
-            main.innerHTML = `Count of movies: ${this.appState.favorites.length}`;
-            this.app.innerHTML = '';
-            this.app.append(main);
-            this.appState.favorites.push('hhh');
+            this.el;
         }
+    }
 
+    class Header extends DivComponent {
+      constructor(appState) {
+        super();
+        this.appState = appState;
+      }
+      render() {
+        this.el.innerHTML = '';
+        this.el.classList.add('header');
+        this.el.innerHTML = `
+            <div>
+                <img src="/static/logo.svg" alt="logo"/>
+            </div>
+            <div class="menu">
+                <a class="menu__item" href="#">
+                    <img src="/static/search.svg" alt="search"/>
+                    Search movies
+                </a>
+                <a class="menu__item" href="#favorites">
+                    <img src="/static/favorites.svg" alt="favorites"/>
+                    Favorites
+                    <div class="menu__counter">
+                        ${this.appState.favorites.length}
+                    </div>
+                </a>
+            </div>
+        `;
+        return this.el;
+      }
+    }
+
+    class Search extends DivComponent {
+      constructor(state) {
+        super();
+        this.state = state;
+      }
+
+      search() {
+        const value = this.el.querySelector('input').value;
+        this.state.searchQuery = value;
+      }
+
+      render() {
+        this.el.classList.add('search');
+        this.el.innerHTML = `
+            <div class="search__wrapper">
+                <input 
+                    type="text" 
+                    placeholder="Find the movie"
+                    class="search__input"
+                    value="${
+                      this.state.searchQuery ? this.state.searchQuery : ''
+                    }"
+                />
+                <img src="/static/search.svg" alt="search icon" />           
+            </div>
+            <button aria-label="Search">
+                <img 
+                    src="static/search-white.svg" 
+                    alt="search icon" 
+                />
+            </button>
+        `;
+        this.el
+          .querySelector('button')
+          .addEventListener('click', ()=>this.search());
+        this.el.querySelector('input').addEventListener('keydown', (event) => {
+          if (event.code === 'Enter') {
+            this.search();
+          }
+        });
+        return this.el;
+      }
+    }
+
+    class CardList extends DivComponent {
+      constructor(state, appState) {
+        super();
+        this.state = state;
+        this.appState = appState;
+      }
+
+      render() {
+        if(this.state.loading){
+            this.el.innerHTML = `
+            <div class="card_list_loader">Loading...</div>
+        `;
+            return this.el;
+        }
+        this.el.classList.add('card_list');
+        console.log(this.state.searchResults);
+        this.el.innerHTML = `
+            <h1>${this.state.searchResults} results were found</h1>
+        `;
+        return this.el;
+      }
+    }
+
+    class MainView extends AbstractView {
+      state = {
+        list: [],
+        loading: false,
+        searchQuery: undefined,
+        offset: 0,
+        searchResults: 0
+      };
+
+      constructor(appState) {
+        super();
+        this.appState = appState;
+        this.appState = onChange(this.appState, this.appStateHook.bind(this));
+        this.state = onChange(this.state, this.stateHook.bind(this));
+        this.setTitle('Search Movies');
+      }
+
+      appStateHook(path) {
+        if (path === 'favorites') {
+          console.log(path);
+          // this.render()
+        }
+      }
+
+      async loadList(s) {
+        const res = await fetch(`http://www.omdbapi.com/?apikey=907c9a79&s=${s}&plot=full`);
+        return res.json();
+      }
+
+      async stateHook(path) {
+        if (path === 'searchQuery') {
+          this.state.loading = true;
+          const data = await this.loadList(this.state.searchQuery);
+          this.state.loading = false;
+          this.state.list = data.Search;
+          this.state.searchResults = data.totalResults;
+          console.log(data.Search);
+        }
+        if(path === 'list' || path ==='loading'){
+          this.render();
+        }
+      }
+
+      render() {
+        const main = document.createElement('div');
+        main.append(new Search(this.state).render());
+        main.append(new CardList(this.state, this.appState).render());
+        this.app.innerHTML = '';
+        this.app.append(main);
+        this.renderHeader();
+      }
+
+      renderHeader() {
+        const header = new Header(this.appState).render();
+        this.app.prepend(header);
+      }
     }
 
     class App {
