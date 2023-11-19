@@ -1,4 +1,5 @@
-import { DivComponent } from '../../common/div-component';
+import { DivComponent } from '../../common/div-component.js';
+import { Card } from '../card/card.js';
 
 import './cardList.css';
 
@@ -16,11 +17,12 @@ export class CardList extends DivComponent {
         `;
         return this.el;
     }
-    this.el.classList.add('card_list');
-    console.log(this.state.searchResults)
-    this.el.innerHTML = `
-            <h1>${this.state.searchResults} results were found</h1>
-        `;
+    const cardGrid = document.createElement('div');
+    cardGrid.classList.add('card__grid');
+    this.el.appendChild(cardGrid);
+    for (const card of this.state.list){
+      cardGrid.append( new Card(card, this.appState).render())
+    }
     return this.el;
   }
 }

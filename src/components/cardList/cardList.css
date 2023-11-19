@@ -5,3 +5,10 @@
     font-size: 16px;
     padding: 30px;
 }
+
+.card__grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
+}

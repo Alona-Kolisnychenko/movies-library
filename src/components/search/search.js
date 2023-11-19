@@ -36,7 +36,7 @@ export class Search extends DivComponent {
         `;
     this.el
       .querySelector('button')
-      .addEventListener('click', ()=>this.search());
+      .addEventListener('click', this.search.bind(this));
     this.el.querySelector('input').addEventListener('keydown', (event) => {
       if (event.code === 'Enter') {
         this.search();

@@ -1,11 +1,16 @@
+import { FavoritesView } from "./views/favorites/favorites";
 import { MainView } from "./views/main/main";
+import { Movie } from "./views/movie/movie";
 
 class App {
  routes = [
-    {path: "", view: MainView}
+    {path: '', view: MainView},
+    {path: '#favorites', view: FavoritesView},
+    {path: '#movie', view: Movie }
  ];
  appState = {
-   favorites: []
+   favorites: [],
+   movieId: ''
  }
  constructor(){
     window.addEventListener('hashchange', this.route.bind(this));

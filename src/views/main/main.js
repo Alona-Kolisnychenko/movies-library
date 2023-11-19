@@ -3,14 +3,15 @@ import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
 import { Search } from '../../components/search/search.js';
 import { CardList } from '../../components/cardList/cardList.js';
+import { Pagination } from '../../components/pagination/pagination.js';
 
 export class MainView extends AbstractView {
   state = {
     list: [],
     loading: false,
     searchQuery: undefined,
-    offset: 0,
-    searchResults: 0
+    page: 2,
+    searchResults: '0',
   };
 
   constructor(appState) {
@@ -21,36 +22,45 @@ export class MainView extends AbstractView {
     this.setTitle('Search Movies');
   }
 
+  destroy() {
+    onChange.unsubscribe(this.appState);
+    onChange.unsubscribe(this.state);
+  }
+
   appStateHook(path) {
     if (path === 'favorites') {
-      console.log(path);
-      // this.render()
+      this.render();
     }
   }
 
-  async loadList(s) {
-    const res = await fetch(`http://www.omdbapi.com/?apikey=907c9a79&s=${s}&plot=full`);
+  async loadList(s, page) {
+    const res = await fetch(
+      `http://www.omdbapi.com/?apikey=907c9a79&s=${s}&page=${page}&plot=full`
+    );
     return res.json();
   }
 
   async stateHook(path) {
-    if (path === 'searchQuery') {
+    if (path === 'searchQuery' || path === 'page') {
       this.state.loading = true;
-      const data = await this.loadList(this.state.searchQuery);
+      const data = await this.loadList(this.state.searchQuery, this.state.page);
       this.state.loading = false;
-      this.state.list = data.Search;
       this.state.searchResults = data.totalResults;
-      console.log(data.Search)
+      this.state.list = data.Search;
     }
-    if(path === 'list' || path ==='loading'){
-      this.render()
+    if (path === 'list' || path === 'loading') {
+      this.render();
     }
   }
 
   render() {
     const main = document.createElement('div');
-    main.append(new Search(this.state).render())
+    main.innerHTML = `
+      <h1>${this.state.searchResults} results were found</h1>
+    `;
+    main.append(new Search(this.state).render());
     main.append(new CardList(this.state, this.appState).render());
+    main.append(new Pagination(this.state).render());
     this.app.innerHTML = '';
     this.app.append(main);
     this.renderHeader();

@@ -1,0 +1,77 @@
+.card{
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.card:hover{
+    box-shadow: 0 0 8px 3px rgb(166, 165, 165);
+}
+
+.card__image{
+    background-color: #888888;
+    display: flex;
+    padding: 10px 0;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+}
+.card__image img{
+    height: 100%;
+}
+.card__info{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--black);
+    color: var(--white);
+    min-height: 100px;
+    padding: 10px;
+}
+.card__type{
+    font-weight: 300;
+    font-size: 11px;
+    line-height: 15px;
+    margin-bottom: 3px;
+}
+.card__name{
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 110%;
+    margin-bottom: 8px;
+    text-decoration: none;
+    color: var(--white);
+}
+.card__name:hover{
+    text-decoration: underline;
+}
+.card__name:visited{
+    color: var(--white);
+}
+
+.card__year{
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 15px;
+}
+.card__footer{
+    margin-top: auto;
+    display: flex;
+}
+
+.button__add{
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--white);
+    cursor: pointer;
+}
+
+.button__active{
+    background: var(--white);
+}
